@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国庆节烟花</title>
+    <style>
+        body {
+            margin: 0;
+            height: 750px;
+            height: 425px;
+            background: black;
+            overflow: hidden;
+        }
+        .flag {
+            width:370px;
+            height:250px; 
+            position:absolute;
+            top:27%; 
+            left:3px; 
+            /* margin-top: -180px; */
+            background-color:#FF0000; 
+            color:#FFFF00;}
+        
+        div {
+            font-size:22.5px;
+        }
+        
+        .bs { 
+            height:170px;
+            width:70px;
+            float:left;
+            /* display:inline; */
+            margin-top:30px;
+            margin-left:12.5px;
+            font-size:60px;
+        }
+        
+        .s {
+            float:left;
+            margin-top:2.5px;
+            margin-left:-20px;
+            }
+        
+        .s1 {
+             padding-top:10px;
+            }
+        
+        .s2 , .s3 {
+             padding-left:25px;
+            }
+        
+        .star3 {
+             margin-top:3.5px;
+            }
+        
+        .s1 ,.s2 ,.s3 ,.s4 {
+             margin-left:5px;
+            }
+        
+        .s1 {
+             margin-top:5px;
+            }
+        /* p{
+            width: 378px;
+            margin-top: 320px;
+            font-size: 20px;
+            color: #FF0000;
+            font-family:KaiTi;
+        } */
+
+        .box{
+            position:absolute;
+            top:10%; 
+            left:17%; 
+            display: flex;
+            width: 100%;
+            /* 投影效果 */
+            -webkit-box-reflect:below 1px linear-gradient(transparent, rgba(0,0,0,0.2));
+        }
+        h3{
+            /* color: #fff; */
+		    color: red;
+            /* font-size: 96px; */
+            /* 字间距 */
+            letter-spacing: 15px;
+            /* 转大写 */
+            text-transform: uppercase;
+            text-align: center;
+            font-weight: 400;
+            line-height: 76px;
+            outline: none;
+            /* 自定义属性 --c,可通过 var 函数对其调用 */
+            --c:red;
+            /* 调用自定义属性--c，设置文字阴影（发光效果） */
+            text-shadow: 0 0 10px var(--c),
+            0 0 20px var(--c),
+            0 0 40px var(--c),
+            0 0 80px var(--c),
+            0 0 160px var(--c);
+            /* 执行动画：动画名 时长 线性的 无限次播放 */
+            animation: animate 5s linear infinite;
+        }
+
+        /* 定义动画 */
+        @keyframes animate{
+            to{
+                /* 色相旋转过滤镜（设置度数可改变颜色） */
+                filter: hue-rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="fireworksCanvas"></canvas>
+    <div>
+        <!-- <p>国庆节快乐！</p> -->
+        <div class="box">
+            <h3 contenteditable="true">国庆节快乐！</h3>
+        </div>
+        <div class="flag">
+            <div class="bs">★</div>
+            
+            <div class="s">
+            
+            <div class="s1">★</div>
+            
+            <div class="s2">★</div>
+            
+            <div class="s3">★</div>
+            
+            <div class="s4">★</div>
+            
+            </div>
+    
+        </div>
+    </div>
+</body>
+<script>
+    const canvas = document.getElementById("fireworksCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight
+    }
+
+    window.addEventListener("resize", resizeCanvas, false);
+
+    class Firework {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = canvas.height;
+            this.sx = Math.random() * 3 - 1.5;
+            this.sy = Math.random() * -3 - 3;
+            this.size = Math.random() * 2 + 1;
+            this.shouldExplode = false;
+            const colorVal = Math.round(0xffffff * Math.random());
+            const r = colorVal >> 16;
+            const g = (colorVal >> 8) & 255;
+            const b = colorVal & 255;
+            this.r = r;
+            this.g = g;
+            this.b = b
+        }
+
+        update() {
+            if (this.sy >= -2 || this.y <= 100 || this.x <= 0 || this.x >= canvas.width) {
+                this.shouldExplode = true
+            } else {
+                this.sy += 0.01
+            }
+            this.x += this.sx;
+            this.y += this.sy
+        }
+
+        draw() {
+            ctx.fillStyle = `rgb(${this.r},${this.g},${this.b})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill()
+        }
+    }
+
+    class Particle {
+        constructor(x, y, r, g, b) {
+            this.x = x;
+            this.y = y;
+            this.sx = Math.random() * 3 - 1.5;
+            this.sy = Math.random() * 3 - 1.5;
+            this.size = Math.random() * 2 + 1;
+            this.life = 100;
+            this.r = r;
+            this.g = g;
+            this.b = b
+        }
+
+        update() {
+            this.x += this.sx;
+            this.y += this.sy;
+            this.life -= 1
+        }
+
+        draw() {
+            ctx.fillStyle = `rgba(${this.r},${this.g},${this.b},${this.life / 100})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill()
+        }
+    }
+
+    const fireworks = [new Firework()];
+    const particles = [];
+
+    function animate() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (Math.random() < 0.05) {
+            fireworks.push(new Firework())
+        }
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            fireworks[i].update();
+            fireworks[i].draw();
+            if (fireworks[i].shouldExplode) {
+                for (let j = 0; j < 50; j++) {
+                    particles.push(new Particle(fireworks[i].x, fireworks[i].y, fireworks[i].r, fireworks[i].g, fireworks[i].b))
+                }
+                fireworks.splice(i, 1)
+            }
+        }
+        for (let i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].life <= 0) {
+                particles.splice(i, 1)
+            }
+        }
+        requestAnimationFrame(animate)
+    }
+
+    animate();
+</script>
+</html>
